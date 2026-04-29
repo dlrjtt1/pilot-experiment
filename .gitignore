@@ -1,0 +1,9 @@
+360-BRIR-FOAIR-database/
+*.wav
+generate_audio_brir*.py
+measure_brir_delay.py
+test_direction.py
+audio/peaks/
+*.reapeaks
+.DS_Store
+名称未設定フォルダ/

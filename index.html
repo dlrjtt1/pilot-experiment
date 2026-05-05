@@ -60,6 +60,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);min-height:100
 .rb{font-size:12px;color:var(--pr);background:none;border:1px solid var(--pr);border-radius:var(--rfull);padding:4px 12px;cursor:pointer;white-space:nowrap;transition:all var(--tr);flex-shrink:0}
 .rb:hover{background:var(--ac)}
 .ntc{background:var(--ac);border:1px solid #b2d8db;border-radius:var(--rlg);padding:10px 14px;font-size:13px;color:var(--pr);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.field{margin-bottom:18px}
+.flbl{font-size:13px;font-weight:700;margin-bottom:8px;color:var(--tx)}
+.txtin{width:100%;border:1.5px solid var(--bd);border-radius:var(--rlg);background:var(--sf);padding:13px 14px;font:inherit;font-size:14px;color:var(--tx);outline:none;transition:border-color var(--tr),box-shadow var(--tr)}
+.txtin:focus{border-color:var(--pr);box-shadow:0 0 0 3px var(--ac)}
+.channel-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}
+.channel-btn{border:none;border-radius:var(--rlg);background:var(--pr);color:#fff;cursor:pointer;padding:18px 12px;font-size:15px;font-weight:700;transition:background var(--tr),transform var(--tr);min-height:70px}
+.channel-btn:hover{background:var(--pr2);transform:translateY(-1px)}
+.channel-btn.playing{animation:cal-pulse 1.2s ease-in-out infinite}
+.check-row{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--bd);border-radius:var(--rlg);padding:12px 14px;margin-top:10px;background:var(--sf2);cursor:pointer}
+.check-row input{margin-top:4px;accent-color:var(--pr)}
+.check-row span{font-size:14px;line-height:1.55}
 .qb{margin-bottom:24px}.qb:last-of-type{margin-bottom:0}
 .qn{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--pr);margin-bottom:4px}
 .qt{font-size:15px;font-weight:600;margin-bottom:16px;line-height:1.45}
@@ -105,6 +116,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);min-height:100
 .rt td{padding:7px 6px;border-bottom:1px solid var(--bd);font-variant-numeric:tabular-nums}
 .rt tr:last-child td{border-bottom:none}
 .rt .bsep td{border-bottom:2px solid var(--pr)}
+.result-meta{background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rlg);padding:12px 14px;margin-bottom:16px;font-size:12px;color:var(--tx);line-height:1.8;text-align:left;white-space:pre-line}
 
 .brir-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rxl);padding:20px 20px 16px;margin-bottom:16px;box-shadow:var(--shsm)}
 .brir-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
@@ -130,7 +142,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);min-height:100
 .intro-overview{font-size:14px;color:var(--tx);line-height:1.9;margin-bottom:20px;white-space:pre-line;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rlg);padding:16px 18px}
 .exp-hint{font-size:13px;color:var(--pr);background:var(--ac);border:1px solid #b2d8db;border-radius:var(--rlg);padding:10px 14px;margin-bottom:12px;line-height:1.6;display:none}
 .exp-hint.visible{display:block}
-@media(max-width:480px){.card{padding:20px 14px}.db{font-size:10px;padding:11px 1px}.btn{padding:11px 16px;font-size:13px}}
+@media(max-width:480px){.card{padding:20px 14px}.db{font-size:10px;padding:11px 1px}.btn{padding:11px 16px;font-size:13px}.channel-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -187,10 +199,32 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);min-height:100
 <button class="btn btn-p" id="istart" onclick="startExp()" style="width:100%;justify-content:center;font-size:16px;padding:15px"></button>
 </div>
 
+<!-- DEVICE -->
+<div class="screen" id="s-device">
+<div class="hdr">
+<div><div class="hdr-lbl">Sound Localization</div><div class="hdr-ttl" id="ht-device"></div></div>
+<div class="lsw"><button class="lb" id="lj-device" onclick="chLang('ja')">JA</button><button class="lb" id="lk-device" onclick="chLang('ko')">KO</button></div>
+</div>
+<div class="card">
+<div class="ii" style="font-size:36px;margin-bottom:12px">🎧</div>
+<div class="it" id="dev-title" style="font-size:18px;margin-bottom:8px"></div>
+<div class="id" id="dev-desc" style="margin-bottom:18px"></div>
+<div class="field">
+<div class="flbl" id="dev-type-lbl"></div>
+<div class="es" id="dev-types"></div>
+</div>
+<div class="field">
+<div class="flbl" id="dev-model-lbl"></div>
+<input class="txtin" id="dev-model" type="text" autocomplete="off" oninput="setDeviceModel(this.value)">
+</div>
+</div>
+<button class="btn btn-p" id="dev-next" onclick="startCalib()" disabled style="width:100%;justify-content:center;font-size:15px;padding:14px;margin-top:8px"></button>
+</div>
+
 <!-- CALIBRATION -->
 <div class="screen" id="s-calib">
 <div class="hdr">
-<div><div class="hdr-lbl">Sound Localization</div><div class="hdr-ttl" id="ht4"></div></div>
+<div><div class="hdr-lbl">Sound Localization</div><div class="hdr-ttl" id="ht-cal"></div></div>
 <div class="lsw"><button class="lb" id="lj4" onclick="chLang('ja')">JA</button><button class="lb" id="lk4" onclick="chLang('ko')">KO</button></div>
 </div>
 <div class="card">
@@ -205,6 +239,26 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);min-height:100
 </div>
 </div>
 <button class="btn btn-p" id="cal-next" onclick="doneCalib()" style="width:100%;justify-content:center;font-size:15px;padding:14px;margin-top:16px"></button>
+</div>
+
+<!-- CHANNEL CHECK -->
+<div class="screen" id="s-channel">
+<div class="hdr">
+<div><div class="hdr-lbl">Sound Localization</div><div class="hdr-ttl" id="ht-channel"></div></div>
+<div class="lsw"><button class="lb" id="lj-channel" onclick="chLang('ja')">JA</button><button class="lb" id="lk-channel" onclick="chLang('ko')">KO</button></div>
+</div>
+<div class="card">
+<div class="ii" style="font-size:36px;margin-bottom:12px">↔</div>
+<div class="it" id="chan-title" style="font-size:18px;margin-bottom:8px"></div>
+<div class="id" id="chan-desc" style="margin-bottom:16px"></div>
+<div class="channel-grid">
+<button class="channel-btn" id="chan-left-btn" onclick="playChannelTest('left')"></button>
+<button class="channel-btn" id="chan-right-btn" onclick="playChannelTest('right')"></button>
+</div>
+<label class="check-row"><input type="checkbox" id="chan-left-ok" onchange="updateChannelCheck()"><span id="chan-left-ok-lbl"></span></label>
+<label class="check-row"><input type="checkbox" id="chan-right-ok" onchange="updateChannelCheck()"><span id="chan-right-ok-lbl"></span></label>
+</div>
+<button class="btn btn-p" id="chan-next" onclick="doneChannelCheck()" disabled style="width:100%;justify-content:center;font-size:15px;padding:14px;margin-top:8px"></button>
 </div>
 
 <!-- REFERENCE -->
@@ -291,11 +345,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);min-height:100
 
 <!-- DONE -->
 <div class="screen" id="s-done">
-<div class="hdr"><div><div class="hdr-lbl">Pilot Study · 2026</div><div class="hdr-ttl" id="ht4"></div></div></div>
+<div class="hdr"><div><div class="hdr-lbl">Pilot Study · 2026</div><div class="hdr-ttl" id="ht-done"></div></div></div>
 <div class="dc">
 <div class="dci">✅</div>
 <div class="dct" id="dtit"></div>
 <div class="dcd" id="ddsc"></div>
+<div class="result-meta" id="rmeta"></div>
 <div style="overflow-x:auto"><table class="rt"><thead><tr id="rhead"></tr></thead><tbody id="rbody"></tbody></table></div>
 <button class="btn btn-p" id="cpybtn" onclick="copyR()" style="width:100%;justify-content:center;margin-top:8px"></button>
 
@@ -342,6 +397,24 @@ var S = {
     calDesc: "実験前にヘッドフォンの音量を合わせます。ボタンを押して音を聴きながら、快適な大きさに調整してください。",
     calHint: "ボタンをクリックして再生 / もう一度クリックで停止",
     calNextBtn: "キャリブレーション完了 →",
+    deviceTitle:'使用機器の記録',
+    deviceDesc:'今回使用しているヘッドフォンまたはイヤフォンの種類を選択してください。機種名が分かる場合は入力してください。',
+    deviceTypeLbl:'種類',
+    deviceModelLbl:'機種名（任意）',
+    deviceModelPh:'例：Sony MDR-CD900ST, AirPods Pro など',
+    deviceNextBtn:'音量調整へ →',
+    deviceTypes:[
+      ['headphones','ヘッドフォン','オーバーイヤー／オンイヤー型'],
+      ['earphones','イヤフォン','カナル型／インナーイヤー型'],
+      ['other','その他','上記以外、または不明']
+    ],
+    channelTitle:'左右チャンネル確認',
+    channelDesc:'左と右のテスト音を再生し、聞こえる方向が合っているか確認してください。左右が逆に聞こえる場合は、接続や装着状態を直してからもう一度確認してください。',
+    channelLeftBtn:'左を再生',
+    channelRightBtn:'右を再生',
+    channelLeftOk:'左の音が左側から聞こえた',
+    channelRightOk:'右の音が右側から聞こえた',
+    channelNextBtn:'左右チャンネル確認完了 →',
     refTitle:'参照音の確認',
     refDesc:'これが基準音です。舞台中央のみから音が再生されます。この音を記憶した上で、実験中の比較基準としてご活用ください。何度でも再生できます。',
     refStartBtn:'実験を開始する →',
@@ -352,7 +425,7 @@ var S = {
     audioLbl:'音声サンプル',
     noticeTxt:'まず音声を再生してから回答してください',
     replayBtn:'↺ 再生',
-    q1:'音の音像は演奏者（舞台中央）の方向に定位していましたか？','音がどの方向から聞こえますか？',
+    q1:['音の音像は演奏者（舞台中央）の方向に定位していましたか？','音がどの方向から聞こえますか？'],
     q1Opts:[
       ['方向がわからなかった','どの方向から来るか確認しにくかった'],
       ['おそらく舞台方向だが不確か','演奏者の方向かもしれないが確信が持てなかった'],
@@ -364,7 +437,7 @@ var S = {
       ['やや不自然だった','リファレンス音と音色が少し違った'],
       ['自然だった','リファレンス音と同じような自然な音色だった']
     ],
-    q3:'音の音像は一つの位置で一貫して聴こえましたか？','その位置が安定して固定されていますか？',
+    q3:['音の音像は一つの位置で一貫して聴こえましたか？','その位置が安定して固定されていますか？'],
     q3Opts:[
       ['一貫しなかった','音の位置がぶれたり曖昧に感じた'],
       ['少しぶれた','音の位置が時々ぶれる感じがあった'],
@@ -377,7 +450,8 @@ var S = {
     breakSkip:'休憩をスキップして次へ →',
     doneTitle:'実験完了',
     doneDesc:'ご参加ありがとうございました。以下が全試行の回答結果です。',
-    thead:['ブロック','#','ITDG','レベル比','Q1 方向性','Q2 距離感','Q3 安定性'],
+    thead:['ブロック','#','ITDG','レベル比','Q1 方向性','Q2 音色','Q3 安定性'],
+    metaLabels:{lang:'言語',device:'使用機器',model:'機種名',channel:'左右チャンネル確認',ok:'完了',empty:'未入力'},
     copyBtn:'📋 結果をコピー',
     refMiniLbl:'参照音',
     refMiniNote:'比較のために随時再生できます',
@@ -398,6 +472,24 @@ var S = {
     calDesc: "실험 전에 헤드폰 음량을 맞춥니다. 버튼을 눌러 소리를 들으면서 편안한 크기로 조절해주세요.",
     calHint: "버튼을 클릭하면 재생 / 다시 클릭하면 정지",
     calNextBtn: "캘리브레이션 완료 →",
+    deviceTitle:'사용 기기 기록',
+    deviceDesc:'이번 실험에 사용 중인 헤드폰 또는 이어폰의 종류를 선택해주세요. 모델명을 알고 있다면 함께 입력해주세요.',
+    deviceTypeLbl:'종류',
+    deviceModelLbl:'모델명 (선택)',
+    deviceModelPh:'예: Sony MDR-CD900ST, AirPods Pro 등',
+    deviceNextBtn:'음량 조절로 이동 →',
+    deviceTypes:[
+      ['headphones','헤드폰','오버이어 / 온이어형'],
+      ['earphones','이어폰','커널형 / 오픈형'],
+      ['other','기타','위 항목 외 또는 잘 모르겠음']
+    ],
+    channelTitle:'좌우 채널 확인',
+    channelDesc:'왼쪽과 오른쪽 테스트음을 재생하여 들리는 방향이 맞는지 확인해주세요. 좌우가 반대로 들리면 연결 상태나 착용 상태를 바로잡은 뒤 다시 확인해주세요.',
+    channelLeftBtn:'왼쪽 재생',
+    channelRightBtn:'오른쪽 재생',
+    channelLeftOk:'왼쪽 소리가 왼쪽에서 들렸다',
+    channelRightOk:'오른쪽 소리가 오른쪽에서 들렸다',
+    channelNextBtn:'좌우 채널 확인 완료 →',
     refTitle:'레퍼런스 음원 확인',
     refDesc:'이것이 기준 소리입니다. 무대 중앙에서만 소리가 납니다. 이 소리를 기억한 채로 이후 비교해주세요. 몇 번이든 다시 재생할 수 있습니다.',
     refStartBtn:'실험 시작 →',
@@ -408,7 +500,7 @@ var S = {
     audioLbl:'음성 샘플',
     noticeTxt:'먼저 음성을 재생한 후 응답해주세요',
     replayBtn:'↺ 재생',
-    q1:'소리의 음상이 연주자(무대 중앙) 방향에 정위되어 있었나요?', '소리가 어느 방향에서 들리고 있나요?',
+    q1:['소리의 음상이 연주자(무대 중앙) 방향에 정위되어 있었나요?', '소리가 어느 방향에서 들리고 있나요?'],
     q1Opts:[
       ['방향을 알 수 없었다','어느 방향에서 오는지 파악하기 어려웠다'],
       ['대략 무대 방향 같았다','연주자 쪽인 것 같았지만 확신할 수 없었다'],
@@ -420,9 +512,9 @@ var S = {
       ['약간 부자연스러웠다','레퍼런스 음원과 음색이 조금 다른 느낌이었다'],
       ['자연스러웠다','레퍼런스 음원과 비슷한 자연스러운 음색이었다']
     ],
-    q3:'소리의 음상이 하나의 위치에서 일관되게 들렸나요?','그 위치가 안정적으로 고정되어 들리고 있나요?',
+    q3:['소리의 음상이 하나의 위치에서 일관되게 들렸나요?','그 위치가 안정적으로 고정되어 들리고 있나요?'],
     q3Opts:[
-      ['알관되지 않았다','소리 위치가 흔들리거나 뭉개졌다'],
+      ['일관되지 않았다','소리 위치가 흔들리거나 뭉개졌다'],
       ['조금 흔들렸다','소리 위치가 때때로 흔들리는 느낌이 있었다'],
       ['일관됐다','소리 위치가 뚜렷하게 고정돼 있었다']
     ],
@@ -433,7 +525,8 @@ var S = {
     breakSkip:'휴식 건너뛰고 다음으로 →',
     doneTitle:'실험 완료',
     doneDesc:'참여해주셔서 감사합니다. 아래는 전체 시행의 응답 결과입니다.',
-    thead:['블록','#','ITDG','레벨비','Q1 방향성','Q2 거리감','Q3 안정성'],
+    thead:['블록','#','ITDG','레벨비','Q1 방향성','Q2 음색','Q3 안정성'],
+    metaLabels:{lang:'언어',device:'사용 기기',model:'모델명',channel:'좌우 채널 확인',ok:'완료',empty:'미입력'},
     copyBtn:'📋 결과 복사',
     refMiniLbl:'레퍼런스 음원',
     refMiniNote:'언제든 비교 재생 가능',
@@ -444,6 +537,8 @@ var S = {
 // ── STATE ────────────────────────────────────────────────
 var lang='ja', curBlk=0, curTrl=0;
 var orders=[], resp=[], brkTimer=null;
+var deviceInfo = {type:null, model:''};
+var channelCheck = {left:false, right:false};
 // Audio pool: ael은 현재 재생 중인 Audio 객체를 가리키는 포인터
 var ael = null;
 var pool = [];   // pool[i] = CONDS[i] 에 대응하는 Audio 객체
@@ -469,12 +564,10 @@ function chLang(l){lang=l;render()}
 
 function render(){
   var t=S[lang];
-  ['ht1','ht2','ht3','ht4'].forEach(function(id){var e=$(id);if(e)e.textContent=t.title});
-  ['j','k'].forEach(function(x){
-    [x,x+'2',x+'-ref'].forEach(function(suf){
-      var e=$('l'+suf);
-      if(e)e.classList.toggle('on',x==='j'?(lang==='ja'):(lang==='ko'));
-    });
+  ['ht1','ht2','ht3','ht-cal','ht-device','ht-channel','ht-ref','ht-done'].forEach(function(id){var e=$(id);if(e)e.textContent=t.title});
+  document.querySelectorAll('.lb').forEach(function(e){
+    if(e.id.indexOf('lj')===0)e.classList.toggle('on',lang==='ja');
+    if(e.id.indexOf('lk')===0)e.classList.toggle('on',lang==='ko');
   });
   var bd=t.introDesc.replace('{B}',NUM_BLOCKS).replace('{T}',CONDS.length);
   if($('itit'))$('itit').textContent=t.introTitle;
@@ -488,9 +581,9 @@ function render(){
   if($('exp-hint')){var eh=$('exp-hint');eh.textContent=t.expHint||'';if(t.expHint){eh.classList.add('visible');}else{eh.classList.remove('visible');}}
   if($('albl'))$('albl').textContent=t.audioLbl;
   if($('rbtn'))$('rbtn').textContent=t.replayBtn;
-  if($('q1t'))$('q1t').textContent=t.q1;
+  if($('q1t'))$('q1t').textContent=questionText(t.q1);
   if($('q2t'))$('q2t').textContent=t.q2;
-  if($('q3t'))$('q3t').textContent=t.q3;
+  if($('q3t'))$('q3t').textContent=questionText(t.q3);
   buildQScale('qsc1',t.q1Opts,curR()&&curR().q1,'selQ1');
   buildQScale('qsc2',t.q2Opts,curR()&&curR().q2,'selQ2');
   buildQScale('qsc3',t.q3Opts,curR()&&curR().q3,'selQ3');
@@ -507,6 +600,8 @@ function render(){
   if($('ref-mini-lbl'))  $('ref-mini-lbl').textContent  = t.refMiniLbl||'参照音';
   if($('ref-mini-note')) $('ref-mini-note').textContent = t.refMiniNote||'';
   if($('rrbtn-mini'))    $('rrbtn-mini').textContent    = t.replayBtn;
+  renderDevice();
+  renderChannel();
   if($('cal-title')){
     var tc = S[lang];
     $('cal-title').textContent = tc.calTitle;
@@ -514,15 +609,41 @@ function render(){
     $('cal-hint').textContent = tc.calHint;
     $('cal-next').textContent = tc.calNextBtn;
 }
-  // ref 화면이 active일 때 텍스트 갱신
-  if(document.getElementById('s-ref').classList.contains('active')){
-    if($('ht-ref'))   $('ht-ref').textContent   = t.title;
-    if($('ref-title'))$('ref-title').textContent = t.refTitle;
-    if($('ref-desc')) $('ref-desc').textContent  = t.refDesc;
-    if($('ref-albl')) $('ref-albl').textContent  = t.audioLbl;
-    if($('rrbtn'))    $('rrbtn').textContent     = t.replayBtn;
-    if($('ref-start'))$('ref-start').textContent = t.refStartBtn;
+  renderRef();
+}
+
+function questionText(q){return Array.isArray(q)?q.join(' '):q}
+
+function renderDevice(){
+  var t=S[lang];
+  if($('dev-title'))$('dev-title').textContent=t.deviceTitle;
+  if($('dev-desc'))$('dev-desc').textContent=t.deviceDesc;
+  if($('dev-type-lbl'))$('dev-type-lbl').textContent=t.deviceTypeLbl;
+  if($('dev-model-lbl'))$('dev-model-lbl').textContent=t.deviceModelLbl;
+  if($('dev-model'))$('dev-model').placeholder=t.deviceModelPh;
+  if($('dev-next'))$('dev-next').textContent=t.deviceNextBtn;
+  var el=$('dev-types');
+  if(el){
+    el.innerHTML=t.deviceTypes.map(function(o){
+      var sel=deviceInfo.type===o[0]?' on':'';
+      return '<div class="eo'+sel+'" onclick="setDeviceType(\''+o[0]+'\')"><div class="er"></div><div class="ec"><div class="el">'+o[1]+'</div><div class="ed">'+o[2]+'</div></div></div>';
+    }).join('');
   }
+  updateDeviceNext();
+}
+
+function renderChannel(){
+  var t=S[lang];
+  if($('chan-title'))$('chan-title').textContent=t.channelTitle;
+  if($('chan-desc'))$('chan-desc').textContent=t.channelDesc;
+  if($('chan-left-btn'))$('chan-left-btn').textContent=t.channelLeftBtn;
+  if($('chan-right-btn'))$('chan-right-btn').textContent=t.channelRightBtn;
+  if($('chan-left-ok-lbl'))$('chan-left-ok-lbl').textContent=t.channelLeftOk;
+  if($('chan-right-ok-lbl'))$('chan-right-ok-lbl').textContent=t.channelRightOk;
+  if($('chan-next'))$('chan-next').textContent=t.channelNextBtn;
+  if($('chan-left-ok'))$('chan-left-ok').checked=channelCheck.left;
+  if($('chan-right-ok'))$('chan-right-ok').checked=channelCheck.right;
+  updateChannelNext();
 }
 
 var calCtx = null;
@@ -569,7 +690,74 @@ function doneCalib(){
     if(calCtx){ calCtx.close(); calCtx=null; }
     var btn=$('cal-play-btn');
     if(btn){ btn.classList.remove('playing'); btn.innerHTML='<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>'; }
-    show('s-ref');
+    show('s-channel');
+    renderChannel();
+}
+
+function setDeviceType(v){
+  deviceInfo.type=v;
+  renderDevice();
+}
+
+function setDeviceModel(v){
+  deviceInfo.model=v.trim();
+  updateDeviceNext();
+}
+
+function updateDeviceNext(){
+  if($('dev-next'))$('dev-next').disabled=!deviceInfo.type;
+}
+
+function startCalib(){
+  if(!deviceInfo.type)return;
+  show('s-calib');
+}
+
+var channelCtx = null;
+var channelSrc = null;
+
+function stopChannelTest(){
+  if(channelSrc){try{channelSrc.stop();}catch(e){} channelSrc=null;}
+  if(channelCtx){channelCtx.close(); channelCtx=null;}
+  ['chan-left-btn','chan-right-btn'].forEach(function(id){if($(id))$(id).classList.remove('playing')});
+}
+
+function playChannelTest(side){
+  stopChannelTest();
+  var btn=$(side==='left'?'chan-left-btn':'chan-right-btn');
+  try{channelCtx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){return;}
+  var osc=channelCtx.createOscillator();
+  var gain=channelCtx.createGain();
+  var merger=channelCtx.createChannelMerger(2);
+  osc.type='sine';
+  osc.frequency.setValueAtTime(440,channelCtx.currentTime);
+  gain.gain.setValueAtTime(0.0001,channelCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.08,channelCtx.currentTime+0.03);
+  gain.gain.exponentialRampToValueAtTime(0.0001,channelCtx.currentTime+0.75);
+  osc.connect(gain);
+  gain.connect(merger,0,side==='left'?0:1);
+  merger.connect(channelCtx.destination);
+  channelSrc=osc;
+  osc.start();
+  osc.stop(channelCtx.currentTime+0.8);
+  if(btn)btn.classList.add('playing');
+  osc.onended=function(){if(channelSrc===osc)stopChannelTest();};
+}
+
+function updateChannelCheck(){
+  channelCheck.left=!!($('chan-left-ok')&&$('chan-left-ok').checked);
+  channelCheck.right=!!($('chan-right-ok')&&$('chan-right-ok').checked);
+  updateChannelNext();
+}
+
+function updateChannelNext(){
+  if($('chan-next'))$('chan-next').disabled=!(channelCheck.left&&channelCheck.right);
+}
+
+function doneChannelCheck(){
+  stopChannelTest();
+  renderRef();
+  show('s-ref');
 }
 
 function buildQScale(scaleId,opts,curVal,selFn){
@@ -606,7 +794,15 @@ function curR(){
 }
 
 // ── FLOW ─────────────────────────────────────────────────
-function startExp(){initBlocks();curBlk=0;curTrl=0;show('s-calib');renderRef()}
+function startExp(){
+  initBlocks();
+  curBlk=0;curTrl=0;
+  deviceInfo={type:null,model:''};
+  channelCheck={left:false,right:false};
+  if($('dev-model'))$('dev-model').value='';
+  render();
+  show('s-device');
+}
 
 function loadTrial(){
   var ci = orders[curBlk][curTrl];
@@ -872,6 +1068,24 @@ function renderRef(){
   }
 }
 
+function deviceTypeLabel(){
+  var types=S[lang].deviceTypes||[];
+  for(var i=0;i<types.length;i++){
+    if(types[i][0]===deviceInfo.type)return types[i][1];
+  }
+  return '';
+}
+
+function resultMetaLines(){
+  var t=S[lang], m=t.metaLabels;
+  return [
+    m.lang+': '+(lang==='ja'?'日本語':'한국어'),
+    m.device+': '+(deviceTypeLabel()||m.empty),
+    m.model+': '+(deviceInfo.model||m.empty),
+    m.channel+': '+((channelCheck.left&&channelCheck.right)?m.ok:m.empty)
+  ];
+}
+
 function startFromRef(){
   rael.pause();
   show('s-exp');
@@ -897,8 +1111,10 @@ function updateNext(){
 function showDone(){
   if(ael){ ael.pause(); }
   if(rael){ rael.pause(); }
+  stopChannelTest();
   show('s-done');
   var t=S[lang];
+  if($('rmeta'))$('rmeta').textContent=resultMetaLines().join('\n');
   $('rhead').innerHTML=t.thead.map(function(h){return '<th>'+h+'</th>'}).join('');
   var tb=$('rbody');tb.innerHTML='';
   for(var b=0;b<NUM_BLOCKS;b++){
@@ -920,7 +1136,7 @@ function showDone(){
 
 function copyR(){
   var t=S[lang];
-  var txt=t.thead.join('\t')+'\n';
+  var txt=resultMetaLines().join('\n')+'\n\n'+t.thead.join('\t')+'\n';
   for(var b=0;b<NUM_BLOCKS;b++){
     for(var ti=0;ti<CONDS.length;ti++){
       var ci=orders[b][ti];var c=CONDS[ci];var r=resp[b][ci];
@@ -931,9 +1147,24 @@ function copyR(){
         +(r&&r.q3?t.q3Opts[r.q3-1][0]:'')+'\n';
     }
   }
-  navigator.clipboard.writeText(txt).then(function(){
-    alert(lang==='ja'?'コピーしました':'복사했습니다');
-  });
+  function ok(){alert(lang==='ja'?'コピーしました':'복사했습니다');}
+  function fallback(){
+    var ta=document.createElement('textarea');
+    ta.value=txt;
+    ta.style.position='fixed';
+    ta.style.left='-9999px';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try{document.execCommand('copy'); ok();}
+    catch(e){window.prompt(lang==='ja'?'結果をコピーしてください':'결과를 복사해주세요',txt);}
+    document.body.removeChild(ta);
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(ok).catch(fallback);
+  }else{
+    fallback();
+  }
 }
 
 // ── INIT ─────────────────────────────────────────────────

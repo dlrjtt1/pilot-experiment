@@ -140,6 +140,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);min-height:100
 .load-bar-fill{height:100%;background:var(--pr);border-radius:var(--rfull);width:0%;transition:width .35s cubic-bezier(.16,1,.3,1)}
 .load-pct{font-size:12px;color:var(--mu);font-variant-numeric:tabular-nums}
 .intro-overview{font-size:14px;color:var(--tx);line-height:1.9;margin-bottom:20px;white-space:pre-line;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rlg);padding:16px 18px}
+.consent-body{font-size:14px;color:var(--tx);line-height:1.9;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rlg);padding:18px 20px;margin-bottom:16px}
+.consent-body p{margin-bottom:14px}.consent-body p:last-child{margin-bottom:0}
+.consent-check{margin-bottom:16px}
 .exp-hint{font-size:13px;color:var(--pr);background:var(--ac);border:1px solid #b2d8db;border-radius:var(--rlg);padding:10px 14px;margin-bottom:12px;line-height:1.6;display:none}
 .exp-hint.visible{display:block}
 @media(max-width:480px){.card{padding:20px 14px}.db{font-size:10px;padding:11px 1px}.btn{padding:11px 16px;font-size:13px}.channel-grid{grid-template-columns:1fr}}
@@ -157,6 +160,23 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);min-height:100
 <button class="lsb" id="btn-ja"><span class="flag">🇯🇵</span>日本語</button>
 <button class="lsb" id="btn-ko"><span class="flag">🇰🇷</span>한국어</button>
 </div></div></div>
+
+
+<!-- CONSENT -->
+<div class="screen" id="s-consent">
+<div class="hdr">
+<div><div class="hdr-lbl">Pilot Study · Consent</div><div class="hdr-ttl" id="ht-consent"></div></div>
+<div class="lsw"><button class="lb" id="lj-consent" onclick="chLang('ja')">JA</button><button class="lb" id="lk-consent" onclick="chLang('ko')">KO</button></div>
+</div>
+<div class="ii">📄</div>
+<div class="it" id="consent-title"></div>
+<div class="consent-body" id="consent-body"></div>
+<label class="check-row consent-check">
+<input type="checkbox" id="consent-agree" onchange="setConsentAgree(this.checked)">
+<span id="consent-agree-lbl"></span>
+</label>
+<button class="btn btn-p" id="consent-next" onclick="continueAfterConsent()" disabled style="width:100%;justify-content:center;font-size:16px;padding:15px"></button>
+</div>
 
 
 <!-- LOADING -->
@@ -384,6 +404,16 @@ var CONDS = [
 var S = {
   ja:{
     title:'音響定位感評価実験',
+    consentTitle:'研究参加説明および同意',
+    consentBody:[
+      '本パイロット研究は、ハイブリッド音響環境において、PA補強音の遅延時間とレベル差が、音の方向性、音色の自然性、音像の一貫性の知覚に及ぼす影響を調べるための予備的な聴取評価です。本調査は、本実験の前に、評価インターフェース、質問文、回答分布の適切性を確認するためのパイロット研究です。',
+      '参加者はヘッドフォンまたはイヤフォンを着用し、リファレンス音源および複数の聴取刺激を聴いた後、各刺激について3つの質問に回答します。実験には、左右チャンネル確認、音量調整、聴取評価、結果提出、簡単な事後意見の確認が含まれ、所要時間は合計で約20–30分です。',
+      '本研究では、各刺激に対する回答、使用したヘッドフォンまたはイヤフォンの種類、左右チャンネル確認結果、聴取環境に関する簡単な情報、自由意見を収集します。収集されたデータは、パイロット分析および本実験設計の改善のために使用され、研究計画書または学術発表・論文作成時には、個人を識別できない匿名・集計形式でのみ使用されます。',
+      '聴取中に耳の痛み、疲労感、不快感、めまいなどを感じた場合は、直ちに実験を中止できます。音量は必ず、ご自身が快適だと感じるレベルに設定してください。参加は任意であり、実験の途中でいつでも中止できます。中止してもいかなる不利益もありません。',
+      '本パイロットはオンライン環境で実施されるため、参加者のヘッドフォン／イヤフォンの種類や聴取環境を完全に統制できない場合があります。そのため、できるだけ静かな環境で、ヘッドフォンまたはイヤフォンを使用してご参加ください。'
+    ],
+    consentAgree:'上記の内容を十分に読み理解したうえで、本パイロット研究に自発的に参加することに同意します。',
+    consentNextBtn:'同意して次へ →',
     introTitle:'実験を始める前に',
     introOverview:'この実験は、コンサートホールでスピーカーによる音響補強を行った際に、演奏者の位置がどの程度自然に感じられるかを調べる聴取実験です。\n実際のコンサートホールで収録した空間音響データ(BRIR)をもとに再現したバイノーラル音源を、ヘッドフォンでお聴きいただきます。音は舞台中央と左右のスピーカー、2方向から同時に再生されます。\n各音源を聴いた後、3つの簡単な質問にお答えください。正解はありません。感じたままに、率直にお答えいただければ幸いです。\n全ての試行が終わったら、結果画面の[結果をコピー]ボタンを押して、結果をお送りください。',
     introDesc:'この実験は、PA補強音の定位感に関する聴取評価実験です。全部で{B}ブロック、各ブロック{T}試行の音声を聴取していただきます。ブロックとブロックの間には休憩時間があります。必ずヘッドフォンを着用し、静かな環境でご参加ください。',
@@ -459,6 +489,16 @@ var S = {
   },
   ko:{
     title:'음향 정위감 평가 실험',
+    consentTitle:'연구 참여 설명 및 동의',
+    consentBody:[
+      '본 파일럿 연구는 하이브리드 음향 환경에서 PA 보강음의 지연 시간과 레벨 차이가 소리의 방향성, 음색 자연성, 음상 일관성 지각에 미치는 영향을 조사하기 위한 예비 청취 평가입니다. 본 조사는 본 실험 전에 평가 인터페이스, 질문 문구, 응답 분포의 적절성을 확인하기 위한 파일럿 연구입니다.',
+      '참가자는 헤드폰 또는 이어폰을 착용하고 레퍼런스 음원 및 여러 청취 자극을 들은 뒤, 각 자극에 대해 세 가지 질문에 응답하게 됩니다. 실험에는 좌우 채널 확인, 음량 조정, 청취 평가, 결과 제출 및 간단한 사후 의견 확인이 포함되며, 총 소요 시간은 약 20–30분입니다.',
+      '본 연구에서는 각 자극에 대한 응답, 사용한 헤드폰 또는 이어폰 종류, 좌우 채널 확인 결과, 청취 환경에 대한 간단한 정보, 자유 의견을 수집합니다. 수집된 데이터는 파일럿 분석과 본 실험 설계 개선을 위해 사용되며, 연구계획서 또는 학술 발표·논문 작성 시 개인을 식별할 수 없는 익명·집계 형태로만 사용됩니다.',
+      '청취 중 귀의 통증, 피로감, 불쾌감, 어지러움 등이 느껴질 경우 즉시 실험을 중단할 수 있습니다. 음량은 반드시 본인이 편안하다고 느끼는 수준으로 설정해 주십시오. 참여는 자발적이며, 실험 도중 언제든지 중단할 수 있고, 중단하더라도 어떠한 불이익도 없습니다.',
+      '본 파일럿은 온라인 환경에서 진행되므로, 참가자의 헤드폰/이어폰 종류와 청취 환경이 완전히 통제되지 않을 수 있습니다. 따라서 가능한 한 조용한 환경에서 헤드폰 또는 이어폰을 사용하여 참여해 주시기 바랍니다.'
+    ],
+    consentAgree:'위 내용을 충분히 읽고 이해했으며, 본 파일럿 연구에 자발적으로 참여하는 데 동의합니다.',
+    consentNextBtn:'동의하고 다음으로 →',
     introTitle:'실험 시작 전 안내',
     introOverview:'이 실험은 콘서트홀에서 스피커를 통해 소리를 보강할 때, 연주자의 위치가 얼마나 자연스럽게 느껴지는지를 알아보는 청취 실험입니다.\n실제 콘서트홀에서 측정한 공간 음향 데이터(BRIR)로 재현된 바이노럴 음원을 헤드폰으로 듣게 됩니다. 소리는 무대 중앙과 좌우 스피커, 두 방향에서 동시에 재생됩니다.\n각 소리를 들은 뒤, 세 가지 간단한 질문에 답해주세요. 정답은 없습니다. 느낀 대로 솔직하게 답해주시면 됩니다.\n모든 시행이 끝나면 결과 화면에서 [결과 복사] 버튼을 눌러 결과를 저에게 보내주세요.',
     introDesc:'이 실험은 PA 보강음의 정위감에 관한 청취 평가입니다. 총 {B}블록, 각 블록당 {T}시행의 음성을 청취합니다. 블록 사이에는 휴식 시간이 있습니다. 반드시 헤드폰을 착용하고 조용한 환경에서 참여해주세요.',
@@ -537,6 +577,7 @@ var S = {
 // ── STATE ────────────────────────────────────────────────
 var lang='ja', curBlk=0, curTrl=0;
 var orders=[], resp=[], brkTimer=null;
+var consentAgreed = false;
 var deviceInfo = {type:null, model:''};
 var channelCheck = {left:false, right:false};
 // Audio pool: ael은 현재 재생 중인 Audio 객체를 가리키는 포인터
@@ -559,12 +600,20 @@ function show(id){document.querySelectorAll('.screen').forEach(function(s){s.cla
 function $(id){return document.getElementById(id)}
 
 // ── LANG ─────────────────────────────────────────────────
-function pickLang(l){lang=l;render();startPreload()}
+function pickLang(l){
+  lang=l;
+  consentAgreed=false;
+  if($('consent-agree'))$('consent-agree').checked=false;
+  render();
+  show('s-consent');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 function chLang(l){lang=l;render()}
 
 function render(){
   var t=S[lang];
   ['ht1','ht2','ht3','ht-cal','ht-device','ht-channel','ht-ref','ht-done'].forEach(function(id){var e=$(id);if(e)e.textContent=t.title});
+  renderConsent();
   document.querySelectorAll('.lb').forEach(function(e){
     if(e.id.indexOf('lj')===0)e.classList.toggle('on',lang==='ja');
     if(e.id.indexOf('lk')===0)e.classList.toggle('on',lang==='ko');
@@ -610,6 +659,31 @@ function render(){
     $('cal-next').textContent = tc.calNextBtn;
 }
   renderRef();
+}
+
+function renderConsent(){
+  var t=S[lang];
+  if($('ht-consent'))$('ht-consent').textContent=t.title;
+  if($('consent-title'))$('consent-title').textContent=t.consentTitle;
+  if($('consent-body'))$('consent-body').innerHTML=t.consentBody.map(function(p){return '<p>'+p+'</p>';}).join('');
+  if($('consent-agree-lbl'))$('consent-agree-lbl').textContent=t.consentAgree;
+  if($('consent-next'))$('consent-next').textContent=t.consentNextBtn;
+  if($('consent-agree'))$('consent-agree').checked=consentAgreed;
+  updateConsentNext();
+}
+
+function setConsentAgree(v){
+  consentAgreed=!!v;
+  updateConsentNext();
+}
+
+function updateConsentNext(){
+  if($('consent-next'))$('consent-next').disabled=!consentAgreed;
+}
+
+function continueAfterConsent(){
+  if(!consentAgreed)return;
+  startPreload();
 }
 
 function questionText(q){return Array.isArray(q)?q.join(' '):q}

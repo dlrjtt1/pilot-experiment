@@ -71,6 +71,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);min-height:100
 .check-row{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--bd);border-radius:var(--rlg);padding:12px 14px;margin-top:10px;background:var(--sf2);cursor:pointer}
 .check-row input{margin-top:4px;accent-color:var(--pr)}
 .check-row span{font-size:14px;line-height:1.55}
+.channel-check-grid{margin:10px 0 0}
+.channel-check-grid .check-row{align-items:center;margin-top:0;min-height:70px;padding:18px 14px}
+.channel-check-grid .check-row:hover,.channel-check-grid .check-row:has(input:checked){border-color:var(--pr);background:var(--ac)}
+.channel-check-grid .check-row input{width:18px;height:18px;margin-top:0;flex-shrink:0}
+.channel-check-grid .check-row span{font-size:15px;font-weight:600}
 .qb{margin-bottom:24px}.qb:last-of-type{margin-bottom:0}
 .qn{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--pr);margin-bottom:4px}
 .qt{font-size:15px;font-weight:600;margin-bottom:16px;line-height:1.45}
@@ -275,8 +280,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);min-height:100
 <button class="channel-btn" id="chan-left-btn" onclick="playChannelTest('left')"></button>
 <button class="channel-btn" id="chan-right-btn" onclick="playChannelTest('right')"></button>
 </div>
+<div class="channel-grid channel-check-grid">
 <label class="check-row"><input type="checkbox" id="chan-left-ok" onchange="updateChannelCheck()"><span id="chan-left-ok-lbl"></span></label>
 <label class="check-row"><input type="checkbox" id="chan-right-ok" onchange="updateChannelCheck()"><span id="chan-right-ok-lbl"></span></label>
+</div>
 </div>
 <button class="btn btn-p" id="chan-next" onclick="doneChannelCheck()" disabled style="width:100%;justify-content:center;font-size:15px;padding:14px;margin-top:8px"></button>
 </div>

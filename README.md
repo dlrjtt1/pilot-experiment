@@ -36,6 +36,10 @@ You, D.-G., Kamekawa, T., & Marui, A. (2026).
 PA-Reinforced Sound on Localization Judgment: A BRIR-Based
 Pilot Listening Experiment.*
 
+## Site
+
+https://dlrjtt1.github.io/pilot-experiment/
+
 ## License
 
 (TBD)
